@@ -1,0 +1,100 @@
+body {
+    background-color: #edeeee;
+}
+
+/*
+        Site navigation
+ */
+
+.nav-link:hover {
+    cursor: pointer;
+}
+
+i.required {
+    content:"*";
+    color:red;
+}
+
+/*
+        Site logo
+ */
+
+.logo {
+    background: #007bff;
+    text-align: center;
+    font-family: Arial, serif;
+    color: #edeeee;
+}
+
+.logo h1 {
+    font-size: 6em;
+    font-weight: bold;
+}
+
+.logo p {
+    position: relative;
+    top: -10px;
+}
+
+/*
+        Polls & variants
+*/
+
+p.poll-question {
+    text-align: justify;
+    overflow: hidden;
+    position: relative;
+    line-height: 1.2em;
+    height: 3.6em; /* exactly three lines */
+}
+p.poll-question:after {
+    content: "";
+    text-align: right;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 50%;
+    height: 1.2em;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1) 80%);
+}
+
+div.variant {
+    position: relative;
+    overflow: hidden;
+    height: 2.5em;
+
+    background-color: #322f50;
+}
+
+div.variant > p {
+    margin: 0;
+    padding: 0 5px;
+    position: absolute;
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    font-size: 1.6em;
+    vertical-align: center;
+
+    color: white;
+    font-weight: bold;
+
+}
+
+div.variant.voteable:hover {
+    cursor: pointer;
+}
+/*
+        Poll creation
+ */
+
+div.variant-creation:not(.variant-invisible) input[type="text"]:placeholder-shown  {
+    background-color: #cdd7d8;
+}
+
+div.variant-creation.variant-invisible {
+    display: none;
+}
