@@ -40,11 +40,11 @@ if (isset($_POST['pollId']) && isset($_POST['variantId'])) {
 }
 
 if (ErrorHandler::GetErrorsCount() === 0){
-    header("Location: main");
+    header('Location: ' . $_SERVER['HTTP_REFERER']);
 }
 else{
     session_start();
     $_SESSION["errorMessages"] = ErrorHandler::$Errors;
-    header("Location: main/error");
+    header('Location: ' . $_SERVER['HTTP_REFERER'] . "/error");
 }
 exit;

@@ -58,9 +58,8 @@ class VariantComponent extends Component
             $bgColor = "";
         }
 
-        // If the user is authorised
-        $userId = User::GetUserIdFromCookies();
-        if ($userId != -1) {
+        // If the poll allows to vote
+        if ($this->Variant->Poll->CanVote) {
             // Then add the handler for voting
             $clickHandler = "onclick=submitForm('$this->formId')";
             $voteable = "voteable";

@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
           integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ"
           crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/script.js"></script>
     <link rel="stylesheet" href="../css/style.css">
     <title>AskingU - Опросы и статистика</title>
 </head>
@@ -44,7 +46,7 @@ if (isset($router) && end($router->PathParams) === 'error')
         ErrorHandler::$Errors = array_merge(ErrorHandler::$Errors, $_SESSION["errorMessages"]);
     }
 
-    session_destroy();
+    unset($_SESSION["errorMessages"]);
 }
 
 
@@ -95,14 +97,12 @@ if (isset($router) && end($router->PathParams) === 'error')
 </nav>
 
 <?php
-    if (isset($controller)){
-        include $controller;
+    if (isset($content)){
+        include $content;
     }
 ?>
 
-<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
-        crossorigin="anonymous"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
         integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
         crossorigin="anonymous"></script>

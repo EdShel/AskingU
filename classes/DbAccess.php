@@ -61,7 +61,7 @@ class DbAccess
             $code = $this->db->errorCode(); // the same as $info[0]
 
             ErrorHandler::AddError("Не получилось выполнить транзакцию \n$sql"
-            . "Код ошибки SQLSTATE: $code, код ошибки драйвера: $info[1]\nИнформация: $info[2]");
+                . "Код ошибки SQLSTATE: $code, код ошибки драйвера: $info[1]\nИнформация: $info[2]");
             $this->db->rollBack();
 
             return false;

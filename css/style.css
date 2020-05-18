@@ -98,3 +98,21 @@ div.variant-creation:not(.variant-invisible) input[type="text"]:placeholder-show
 div.variant-creation.variant-invisible {
     display: none;
 }
+
+/*
+            Poll viewing
+ */
+
+.poll-view-question {
+    padding: 15px;
+    word-wrap: break-word;
+}
+
+.poll-view-question {
+    height: 100%;
+    background-color: white;
+}
+
+.up-indent {
+    margin-top: 32px;
+}

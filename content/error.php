@@ -1,13 +1,11 @@
 <?php
-if (!isset($errorMsg)){
-    $errorMsg = "Неизвестная ошибка!";
+require_once 'classes/MVC/Controller.php';
+require_once 'classes/ErrorHandler.php';
+
+
+if (ErrorHandler::GetErrorsCount() == 0){
+    ErrorHandler::AddError("Неизвестная ошибка!");
 }
-?>
-<div class="error-message">
-    <h3>
-        Упс!
-    </h3>
-    <p>
-        <?php echo $errorMsg; ?>
-    </p>
-</div>
+
+
+Controller::View("main.php");

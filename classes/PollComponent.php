@@ -57,21 +57,8 @@ class PollComponent extends Component
                 </ul>
                 <div class="card-body">
                     <a href="#" class="card-link">{$likeHTML} {$likes} Оценить</a>
-                    <a href="polls?id={$this->poll->Url}" class="card-link">Подробнее</a>
+                    <a href="/viewPoll?id={$this->poll->Url}" class="card-link">Подробнее</a>
 HTML;
-
-        // DEBUG button for deleting
-        if ($this->poll->CreatorId == User::GetUserIdFromCookies()) {
-            $formId = "delForm" . $this->poll->Id;
-            $res .= <<<HTML
-<form action="/deletePoll" method="post" id="$formId">
-    <input type="hidden" name="pollId" value="{$this->poll->Id}">
-    <a class="card-link" href="#"
-    onclick="document.getElementById('{$formId}').submit();">Удалить опрос</a>
-</form>
-HTML;
-
-        }
 
         $res .= <<<HTML
                 </div>

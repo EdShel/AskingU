@@ -2,6 +2,7 @@
 
 require_once "DbAccess.php";
 require_once "iModelMap.php";
+require_once "User.php";
 
 class Poll implements iModelMap
 {
@@ -33,6 +34,10 @@ class Poll implements iModelMap
 
     public bool $ShuffleVariants;
 
+    public bool $CanVote;
+
+    public bool $IsPollOfCurrentUser;
+
     // Basic constructor
     public function __construct(
         int $id,
@@ -52,6 +57,12 @@ class Poll implements iModelMap
         $this->BlockingTime = $blockingTime;
         $this->Likes = $likes;
         $this->ShuffleVariants = $shuffleVariants;
+
+        $currentUser = User::GetUserIdFromCookies();
+        $this->CanVote = $currentUser != -1
+            && ($blockingTime == NULL || $blockingTime < new DateTime());
+
+        $this->IsPollOfCurrentUser = ($this->CreatorId == $currentUser);
     }
 
     /*
