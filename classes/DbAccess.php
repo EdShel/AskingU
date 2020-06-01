@@ -25,7 +25,7 @@ class DbAccess
         try {
             $this->db = new PDO("sqlite:" . self::$dbLocation);
         } catch (PDOException $ex) {
-            die ('Cannot open data base connection!');
+            die ('Невозможно открыть соединение с БД!');
         }
 
         // Db object must throw exceptions (in order to handle them)
@@ -46,6 +46,26 @@ class DbAccess
         }
     }
 
+    public function PrepareStatement(string $sql): PDOStatement
+    {
+        return $this->db->prepare($sql);
+    }
+
+    public function BeginTransaction()
+    {
+        $this->db->beginTransaction();
+    }
+
+    public function Commit()
+    {
+        $this->db->commit();
+    }
+
+    public function Rollback()
+    {
+        $this->db->rollBack();
+    }
+
     public function SQLTransaction(string $sql): bool
     {
         try {
@@ -57,13 +77,8 @@ class DbAccess
 
             return true;
         } catch (PDOException $ex) {
-            $info = $this->db->errorInfo();
-            $code = $this->db->errorCode(); // the same as $info[0]
-
-            ErrorHandler::AddError("Не получилось выполнить транзакцию \n$sql"
-                . "Код ошибки SQLSTATE: $code, код ошибки драйвера: $info[1]\nИнформация: $info[2]");
+            $this->CatchPDOException($sql, $ex);
             $this->db->rollBack();
-
             return false;
         }
     }
@@ -85,6 +100,7 @@ class DbAccess
                 ErrorHandler::AddError(
                     "Не удалось выполнить подзапрос {$query}\n"
                     . $ex->getMessage());
+                throw $ex;
             }
         }
     }
@@ -154,9 +170,34 @@ class DbAccess
      */
     private function InitializeDb()
     {
-        Poll::InitSQLTable($this);
-        Variant::InitSQLTable($this);
-        User::InitSQLTable($this);
-        Vote::InitSQLTable($this);
+        try {
+
+            $this->db->beginTransaction();
+
+            Poll::InitSQLTable($this);
+            Variant::InitSQLTable($this);
+            User::InitSQLTable($this);
+            Vote::InitSQLTable($this);
+
+
+            $this->SQLRun(<<<SQL
+INSERT INTO users(name, email, password, claims, year, gender)
+VALUES('Admin', 'admin@mail.com', '1', 0, 2001, 0);
+SQL);
+            $this->db->commit();
+
+        } catch (PDOException $ex) {
+            ErrorHandler::AddError("Не получилось создать БД!");
+            $this->db->rollBack();
+            $this->CatchPDOException("", $ex);
+        }
+    }
+
+    private function CatchPDOException(string $sql, PDOException $ex): void{
+        $info = $this->db->errorInfo();
+        $code = $this->db->errorCode(); // the same as $info[0]
+
+        ErrorHandler::AddError("Не получилось выполнить транзакцию \n$sql"
+            . "Код ошибки SQLSTATE: $code, код ошибки драйвера: $info[1]\nИнформация: $info[2]");
     }
 }

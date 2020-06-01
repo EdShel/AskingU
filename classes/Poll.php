@@ -81,13 +81,24 @@ class Poll implements iModelMap
         $this->Url = self::GenerateUniqueUrl($db, 5);
 
         // Add poll to the db
-        $db->SQLRun(<<<SQL
-INSERT INTO polls(creatorId, question, isPublic, url,
-                  blockingTime, likes, shuffle) 
-VALUES($this->CreatorId, "$this->Question", $isPublicInt, "$this->Url",
-       "$blockingDateStr", $this->Likes, $shuffle);
+
+        $stmt = $db->PrepareStatement(<<<SQL
+            INSERT INTO polls(creatorId, question, isPublic, url,
+                    blockingTime, likes, shuffle) 
+                    VALUES(:CreatorId, :Question, :IsPublicInt, :Url,
+                    :blockingDateStr, :Likes, :Shuffle);
 SQL
         );
+
+        $stmt->bindParam(":CreatorId", $this->CreatorId, PDO::PARAM_INT);
+        $stmt->bindParam(":Question", $this->Question, PDO::PARAM_STR);
+        $stmt->bindParam(":IsPublicInt", $isPublicInt, PDO::PARAM_INT);
+        $stmt->bindParam(":Url", $this->Url, PDO::PARAM_STR);
+        $stmt->bindParam(":blockingDateStr", $blockingDateStr, PDO::PARAM_INT);
+        $stmt->bindParam(":Likes", $this->Likes, PDO::PARAM_INT);
+        $stmt->bindParam(":Shuffle", $shuffle, PDO::PARAM_INT);
+
+        $stmt->execute();
 
         // Update instance's id
         $lastRowId = $db->GetLastInsertId();
@@ -97,7 +108,7 @@ SQL
     /*
      * Reads poll from the database
      */
-    public static function FromDb(DbAccess $db, PDORow $queryResult, int $userId, bool $withVariants): Poll
+    public static function FromDb(DbAccess $db, $queryResult, int $userId, bool $withVariants): Poll
     {
         // Create new Poll from query result
         $poll = new Poll(
@@ -171,9 +182,10 @@ SQL
 
     /*
      * Initializes db table of polls
-     */public static function InitSQLTable(DbAccess $db): void
-{
-    $db->SQLRun(<<<SQL
+     */
+    public static function InitSQLTable(DbAccess $db): void
+    {
+        $db->SQLRun(<<<SQL
             CREATE TABLE polls(
                 id INTEGER PRIMARY KEY,
                 creatorId INTEGER,
@@ -186,9 +198,8 @@ SQL
                 FOREIGN KEY (creatorId) REFERENCES users(id)
             );
             SQL
-    );
-}
-
+        );
+    }
 
 
     /*
@@ -223,6 +234,18 @@ SQL
         }
     }
 
+    public static function IsQuestionCorrect($question): bool
+    {
+        // Check for having at least 2 letters
+        return preg_match("~[A-Za-zА-Яа-яЁё]{2,}~", $question)
+            // Check for city phone number with an area code
+            && !preg_match("~\( \d{3} \) (\d [-\s]?){5}~x", $question)
+            // Check for city phone number without an area code
+            && !preg_match("~(\d [-\s]?){6}~x", $question)
+            // Check for mobile phone number with or without calling code
+            && !preg_match("~( \+ \d{1,2} )( \d[-\s]? ){10,12}~x", $question);
+    }
+
     private static function GenerateUniqueUrl(DbAccess $db, int $len): string
     {
         // Range of available characters
@@ -232,6 +255,12 @@ SQL
         $posLen = strlen($possibleChars);
 
         mt_srand(time());
+
+        $stmt = $db->PrepareStatement(<<<SQL
+            SELECT TRUE FROM polls WHERE url = :url;
+        SQL
+        );
+        $stmt->bindParam(':url', $url, PDO::PARAM_STR);
 
         do {
             // Generate random char from the given range and append it
@@ -249,9 +278,7 @@ SQL
                 $url .= $possibleChars[$r];
             }
         } // If exists url, try more
-        while ($db->SQLSingle(<<<SQL
-            SELECT TRUE FROM polls WHERE url = "{$url}";
-        SQL, false) != NULL);
+        while ($stmt->execute() && $stmt->fetch());
 
         return $url;
     }

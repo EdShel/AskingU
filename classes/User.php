@@ -62,7 +62,7 @@ class User implements iModelMap
             SQL, true);
 
             // If user exists
-            if (count($userResult) != 0) {
+            if ($userResult && count($userResult) != 0) {
                 // Check written access token
                 $accessToken = $userResult['accessToken'];
 
@@ -151,6 +151,38 @@ class User implements iModelMap
     public static function IsEmailCorrect(string $mail): bool
     {
         return preg_match("/([\w]+\.?)+@\w+(\.[\w]+){1,3}/", $mail);
+    }
+
+    public static function IsNameCorrect(string $name, &$exception): bool
+    {
+        // Unicode sequence with valid cyrillic and latin characters
+        $wchar = '[A-Za-zА-Яа-яЁё]';
+
+        // Initials substring e.g. "А.С. Пушкин" => "А.С." or "А.Пушкин" => "A."
+        $inits = "( ( ( ([A-Z][a-z]?) | ([А-ЯЁ][а-яё]) ) \. \s? ){1,2} )";
+
+        // Second name substring e.g. "А.С. Пушкин" => " Пушкин" or "Дж. фон Нейман" => " фон Нейман"
+        $secondName = "(\s*['`]?{$wchar}+(-{$wchar}+)?)+";
+
+        // Check the name for initials are only at the beginning
+        $correctNameAndInitials =
+                (preg_match("~{$inits}?{$secondName}~xs", $name)
+                // Check for trailing initials and their absence
+            ||  preg_match("~{$secondName}\s+{$inits}?~xs", $name));
+
+            // Check for forbidden symbols
+        $containsForbiddenChars = preg_match("~[0-9!?,\"/\\\@#$%^&*()=+]~", $name);
+
+        if (!$correctNameAndInitials){
+            $exception = "Неправильная запись фамилии и инициалов!";
+            return false;
+        }
+        if ($containsForbiddenChars){
+            $exception = "Фамилия и инициалы не должны содержать следующие символы: цифры, знаки пунктуации, спец-символы";
+            return false;
+        }
+
+        return true;
     }
 
     /*

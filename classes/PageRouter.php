@@ -1,14 +1,16 @@
 <?php
 
+namespace Routing;
+
 class PageRouter
 {
-    public array $PathParams = array();
+    public static array $PathParams = array();
 
     function __construct()
     {
         // Retrieving query params from request URL
         $pathMatches = array();
-        $requestReg = "/\/(\w+)/";
+        $requestReg = "~/(\w+)~";
         $foundPath = preg_match_all(
             $requestReg,
             $_SERVER["REQUEST_URI"],
@@ -16,7 +18,7 @@ class PageRouter
         );
 
         foreach ($pathMatches[1] as $indx => $match) {
-            $this->PathParams[] = $match;
+            self::$PathParams[] = $match;
         }
     }
 
@@ -26,7 +28,7 @@ class PageRouter
     public function GetContentFile($dirToSearch, $pathIfNoParams = NULL)
     {
         // Check how many query parameters is there
-        $paths = count($this->PathParams);
+        $paths = count(self::$PathParams);
 
         // If there are no parameters, use default content
         if ($paths === 0 && $pathIfNoParams != NULL){
@@ -36,7 +38,7 @@ class PageRouter
         // Go through all the path pieces
         for ($i = 0; $i < $paths; ++$i) {
             // If there is controller with .php extension
-            $nextPathPiece = $this->PathParams[$i];
+            $nextPathPiece = self::$PathParams[$i];
             $desiredFile = $dirToSearch . "\\" . $nextPathPiece . ".php";
             if (file_exists($desiredFile)) {
                 // Run the controller

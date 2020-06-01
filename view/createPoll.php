@@ -145,7 +145,7 @@ HTML;
 
         <div>
             <input type="submit" name="submit" value="Опубликовать" class="btn btn-primary">
-            <a type="button" class="btn btn-secondary" href="main">На главную</a>
+            <a type="button" class="btn btn-secondary" href="main">Вернуться</a>
         </div>
     </form>
 </div>

@@ -9,7 +9,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form action="register" method="post">
+                <form action="register" method="post" >
 
                     <!-- User's name -->
 
@@ -86,7 +86,7 @@
                     <?php
 
                     // Get all the label text which if followed by a required input
-                    $regEx = "~<label.*?>(.+?)</label>(?:\s*<.+?>.*?</.+?>\s*)?<input.+?required.*?>~s";
+                    $regEx = "~<label.*?>([^<>]+?)</label>(?:\s*<[^<>]+?>[^<>]*?</.+?>\s*)?<input[^<>]+?required.*?>~s";
 
                     // In this very file
                     $thisFile = file_get_contents($_SERVER["DOCUMENT_ROOT"]."/view/register.php");

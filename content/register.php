@@ -2,28 +2,33 @@
 require_once "./classes/User.php";
 if (isset($_POST['submit'])) {
 
-    $errors = array();
-
     require_once "classes/DbAccess.php";
+    require_once "classes/ErrorHandler.php";
 
     if (!isset($db)) {
         $db = new DbAccess();
     }
 
-    if (count($errors) == 0) {
+    if (ErrorHandler::GetErrorsCount() == 0) {
 
+        $name = trim($_POST['name']);
         $email = trim($_POST['email']);
+
+        if (!User::IsNameCorrect($name, $exception)){
+            ErrorHandler::AddError("$exception $name");
+        }
         if (!User::IsEmailCorrect($email)) {
-            $errors[] = "Неверный адрес электронной почты!";
-        } else if (User::IsUserRegistered($db, $email)) {
-            $errors[] = "Пользователь уже зарегистрирован!";
+            ErrorHandler::AddError("Неверный адрес электронной почты! $email");
+        }
+        if (User::IsUserRegistered($db, $email)) {
+            ErrorHandler::AddError("Пользователь $email уже зарегистрирован!");
         }
     }
 
 
-    if (count($errors) == 0) {
+    if (ErrorHandler::GetErrorsCount() == 0) {
         $user = new User();
-        $user->Name = trim($_POST['name']);
+        $user->Name = $name;
         $user->Email = $email;
         $user->Password = User::HashPassword($_POST['password']);
         $user->YearOfBirth = $_POST['year'];
@@ -35,18 +40,11 @@ if (isset($_POST['submit'])) {
         exit();
     } else {
         // Output all the errors
+        require_once "classes/MVC/Controller.php";
 
-        echo "<div>";
-
-        foreach ($errors as $i => $error) {
-            echo <<<HTML
-                <div>
-                    {$error}
-                </div>
-            HTML;
-        }
-
-        echo "</div>";
+        unset($_POST['submit']);
+        Controller::View("main.php");
+        exit;
     }
 }
 

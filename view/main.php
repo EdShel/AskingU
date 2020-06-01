@@ -21,24 +21,18 @@
             $userId = User::GetUserIdFromCookies();
         }
 
-        //        $db->SQLTransaction(<<<SQL
-        //        INSERT INTO polls(name) VALUES('Error');
-        //        INSERT INTO var(name) VALUES('Error');
-        //
-        //SQL);
-
         try {
             // Get polls to display
             $pollsIds = $db->SQLMultiple("SELECT * FROM polls");
 
             // If found none
-            if ($pollsIds === NULL){
+            if ($pollsIds === NULL) {
                 throw new Exception();
             }
 
             // Go through all the polls
             while ($pollArray = $pollsIds->fetch(SQLITE3_ASSOC)) {
-                if ($pollArray == NULL){
+                if ($pollArray == NULL) {
                     ErrorHandler::AddError("Невозможно получить опрос!");
                     break;
                 }

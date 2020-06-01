@@ -30,7 +30,7 @@ class PollComponent extends Component
             <div class="col-lg-4 col-md-6 col-sm-12 col-12 mb-3">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Опрос №{$this->poll->Id}</h5>
+                        <h5 class="card-title">Участников: {$this->poll->VotesCount}</h5>
                         <p class="card-text poll-question">{$this->poll->Question}</p>
                     </div>
                     <ul class="list-group list-group-flush">

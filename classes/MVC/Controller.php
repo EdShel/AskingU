@@ -7,4 +7,8 @@ class Controller
         $content = $_SERVER['DOCUMENT_ROOT'] . '/view/' . $view;
         include $_SERVER['DOCUMENT_ROOT'] . '/index.php';
     }
+
+    public static function RedirectBack(): void{
+        header('Location: ' . $_SERVER['HTTP_REFERER']);
+    }
 }

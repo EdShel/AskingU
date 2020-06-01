@@ -34,8 +34,14 @@ class Variant implements iModelMap
     }
 
     public function ToDB(DbAccess $db){
-        $db->SQLSingle(
-            "INSERT INTO variants(pollId, id, value) VALUES({$this->PollId}, {$this->Id}, \"{$this->Value}\");", false);
+
+        $stmt = $db->PrepareStatement("INSERT INTO variants(pollId, id, value) VALUES(:PollId, :Id, :Value);");
+
+        $stmt->bindParam(":PollId", $this->PollId, PDO::PARAM_INT);
+        $stmt->bindParam(":Id", $this->Id, PDO::PARAM_INT);
+        $stmt->bindParam(":Value", $this->Value, PDO::PARAM_STR);
+
+        $stmt->execute();
     }
 
     public static function FromQuery(array $queryResult): Variant

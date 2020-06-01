@@ -1,16 +1,20 @@
 <?php
 
 require_once "classes/ErrorHandler.php";
+require_once "classes/DbAccess.php";
+require_once "classes/Poll.php";
+require_once "classes/Variant.php";
 
 define("maxVariants", 8);
 define("minVariants", 2);
 
 
 if (isset($_POST['submit'])) {
-    $question = $_POST['question'];
 
-    if (trim($question) === "") {
-        ErrorHandler::AddError("Вопрос не может быть пустым!");
+    $question = trim($_POST['question']);
+
+    if (!Poll::IsQuestionCorrect($question)) {
+        ErrorHandler::AddError("Вопрос не может быть пустым или содержать телефонный номер!");
     }
 
     $variants = array();
@@ -32,11 +36,9 @@ if (isset($_POST['submit'])) {
     if (count($variants) < minVariants) {
         ErrorHandler::AddError(
             "Для создания опроса необходимо как минимум " . minVariants . " вариантов");
-    } else {
+    }
 
-        require_once "classes/DbAccess.php";
-        require_once "classes/Poll.php";
-        require_once "classes/Variant.php";
+    if (ErrorHandler::GetErrorsCount() == 0) {
 
         // Open db connection
         if (!isset($db)) {
@@ -74,12 +76,33 @@ if (isset($_POST['submit'])) {
             0,
             isset($_POST["shuffle"]));
 
-        $poll->ToDB($db);
 
-        // Create variants
-        for ($i = 0, $c = count($variants); $i < $c; $i++) {
-            $variant = new Variant($poll->Id, $i, $variants[$i]);
-            $variant->ToDB($db);
+        try {
+            // Start transaction
+            $db->BeginTransaction();
+
+            // Insert Poll to the DB
+            $poll->ToDB($db);
+
+            // Prepare statement for inserting poll's variants
+            $stmt = $db->PrepareStatement(
+                "INSERT INTO variants(pollId, id, value) VALUES(:PollId, :Id, :Value);");
+
+            $stmt->bindParam(":PollId", $poll->Id, PDO::PARAM_INT);
+            $stmt->bindParam(":Id", $i, PDO::PARAM_INT);
+            $stmt->bindParam(":Value", $text, PDO::PARAM_STR);
+
+            // Create and insert variants
+            for ($i = 0, $c = count($variants); $i < $c; $i++) {
+                $text = $variants[$i];
+                $stmt->execute();
+            }
+
+            // Commit changes
+            $db->Commit();
+        } catch (Exception $ex) {
+            // If an error, rollback
+            $db->Rollback();
         }
     }
 
@@ -95,4 +118,6 @@ if (isset($_POST['submit'])) {
     exit;
 }
 
-include $_SERVER["DOCUMENT_ROOT"] . "/view/createPoll.php";
+require_once "classes/MVC/Controller.php";
+
+Controller::View("createPoll.php");

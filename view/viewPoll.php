@@ -61,12 +61,12 @@ HTML;
         <p>
             <a class="btn btn-info" data-toggle="collapse"
                href="#collapseStats" role="button"
-               aria-expanded="true" aria-controls="collapseStats">
+               aria-expanded="false" aria-controls="collapseStats">
                 <span class="fas fa-chevron-circle-down"></span>
                 Скрыть/отобразить статистику
             </a>
         </p>
-        <div class="collapse show" id="collapseStats">
+        <div class="collapse" id="collapseStats">
             <div class="row">
                 <div class="col-lg-4 col-md-6 col-sm-12 col-12">
                     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>

@@ -21,6 +21,7 @@ require_once "classes/DbAccess.php";
 require_once "classes/User.php";
 require_once "classes/Component.php";
 require_once "classes/ErrorHandler.php";
+require_once "classes/PageRouter.php";
 
 // Create db connection
 $db = new DbAccess();
@@ -37,15 +38,18 @@ if (!isset($user)) {
 }
 
 // Try to get errors from the session (when redirected)
-if (isset($router) && end($router->PathParams) === 'error')
+if (end(Routing\PageRouter::$PathParams) === 'error')
 {
     session_start();
 
+    // If there are some save error messages
     if (isset($_SESSION["errorMessages"])){
+
         // Add new errors to the current list
         ErrorHandler::$Errors = array_merge(ErrorHandler::$Errors, $_SESSION["errorMessages"]);
     }
 
+    // Delete save errors as they are being displayed now
     unset($_SESSION["errorMessages"]);
 }
 
@@ -70,7 +74,7 @@ if (isset($router) && end($router->PathParams) === 'error')
                         <a class="nav-link" href="/createPoll">Создать опрос</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">{$user->Name}</a>
+                        <a class="nav-link" href="user">{$user->Name}</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/logout">Выйти</a>
