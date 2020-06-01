@@ -23,6 +23,8 @@ require_once "classes/Component.php";
 require_once "classes/ErrorHandler.php";
 require_once "classes/PageRouter.php";
 
+echo "index.php";
+
 // Create db connection
 $db = new DbAccess();
 

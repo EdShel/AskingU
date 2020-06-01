@@ -25,7 +25,7 @@ class DbAccess
         try {
             $this->db = new PDO("sqlite:" . self::$dbLocation);
         } catch (PDOException $ex) {
-            die ('Невозможно открыть соединение с БД!');
+            die ('Невозможно открыть соединение с БД! ' . $ex->getMessage());
         }
 
         // Db object must throw exceptions (in order to handle them)
