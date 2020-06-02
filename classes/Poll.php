@@ -101,12 +101,16 @@ class Poll implements iModelMap
      */
     public function ToDB(DbAccess $db)
     {
+
+
+
         // Get string format of date to block voting
         $blockingDateStr = self::GetDateTimeFormat($this->BlockingTime);
         // Whether this poll is visible for everyone
         $isPublicInt = (int)$this->IsPublic;
         // Whether variants must be randomly shuffled
         $shuffle = (int)$this->ShuffleVariants;
+        echo "id: $this->Id ques: $this->Question isPublic: $this->IsPublic Url: $this->Url Block: $blockingDateStr likes: $this->Likes shuffle $shuffle";
 
         // Generate unique URL
         $this->Url = self::GenerateUniqueUrl($db, 5);
@@ -121,6 +125,8 @@ class Poll implements iModelMap
 SQL
         );
 
+        echo "command text: $stmt->queryString <br>";
+
         $stmt->bindParam(":CreatorId", $this->CreatorId, PDO::PARAM_INT);
         $stmt->bindParam(":Question", $this->Question, PDO::PARAM_STR);
         $stmt->bindParam(":IsPublicInt", $isPublicInt, PDO::PARAM_INT);
@@ -129,7 +135,11 @@ SQL
         $stmt->bindParam(":Likes", $this->Likes, PDO::PARAM_INT);
         $stmt->bindParam(":Shuffle", $shuffle, PDO::PARAM_INT);
 
+        echo " binded ";
+
         $stmt->execute();
+
+        echo "executed";
 
         // Update instance's id
         $lastRowId = $db->GetLastInsertId();
