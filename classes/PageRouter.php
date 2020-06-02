@@ -35,23 +35,26 @@ class PageRouter
         $paths = count(self::$PathParams);
 
         // If there are no parameters, use default content
-        if ($paths === 0 && $contentIfNoParams != NULL){
-            echo "<hr>Used default path: " . $dirToSearch . "\\" . $contentIfNoParams . ".php";
-            return $dirToSearch . "\\" . $contentIfNoParams . ".php";
+        if ($paths === 0 && $contentIfNoParams != NULL) {
+            echo "<hr>Used default path: " . $dirToSearch . "//" . $contentIfNoParams . ".php";
+            return $dirToSearch . "//" . $contentIfNoParams . ".php";
         }
 
         // Go through all the path pieces
         for ($i = 0; $i < $paths; ++$i) {
             // If there is controller with .php extension
             $nextPathPiece = self::$PathParams[$i];
-            $desiredFile = $dirToSearch . "\\" . $nextPathPiece . ".php";
+            $desiredFile = $dirToSearch . "//" . $nextPathPiece . ".php";
             echo "searching for " . $desiredFile . "<hr>";
             if (file_exists($desiredFile)) {
                 // Run the controller
                 return $desiredFile;
             }
+            else{
+                echo "File " . $desiredFile . " not found";
+            }
             // There is no such controller, so try more
-            $dirToSearch .= "\\" . $nextPathPiece;
+            $dirToSearch .= "//" . $nextPathPiece;
         }
 
         return NULL;

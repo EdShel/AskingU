@@ -6,7 +6,7 @@ if (preg_match('/\.(?:png|jpg|jpeg|gif|css|js)$/', $_SERVER["REQUEST_URI"])) {
 } else {
     require "classes/PageRouter.php";
     $router = new PageRouter();
-    $contentSearchDir = $_SERVER['DOCUMENT_ROOT'] . "\content";
+    $contentSearchDir = $_SERVER['DOCUMENT_ROOT'] . "/content";
     $controller = $router->GetContentFile($contentSearchDir, "main");
 
     if ($controller == NULL) {
