@@ -87,6 +87,7 @@ echo "begin trans";
 
             // Insert Poll to the DB
             $poll->ToDB($db);
+            echo "added poll0;0;";
 
             // Prepare statement for inserting poll's variants
             $stmt = $db->PrepareStatement(
@@ -100,6 +101,7 @@ echo "begin trans";
             for ($i = 0, $c = count($variants); $i < $c; $i++) {
                 $text = $variants[$i];
                 $stmt->execute();
+                echo " added var";
             }
 
             // Commit changes
