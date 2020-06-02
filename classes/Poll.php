@@ -117,13 +117,13 @@ class Poll implements iModelMap
 
         // Add poll to the db
 
-        $stmt = $db->PrepareStatement(<<<SQL
+        $insert = <<<SQL
             INSERT INTO polls(creatorId, question, isPublic, url,
                     blockingTime, likes, shuffle) 
                     VALUES(:CreatorId, :Question, :IsPublicInt, :Url,
                     :blockingDateStr, :Likes, :Shuffle);
-SQL
-        );
+SQL;
+        $stmt = $db->PrepareStatement($insert);
 
         echo "command text: $stmt->queryString <br>";
 
@@ -298,7 +298,7 @@ SQL
         mt_srand(time());
 
         $stmt = $db->PrepareStatement(<<<SQL
-            SELECT TRUE FROM polls WHERE url = :url;
+            SELECT 1 FROM polls WHERE url = :url;
         SQL
         );
         $stmt->bindParam(':url', $url, PDO::PARAM_STR);
