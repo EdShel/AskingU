@@ -3,7 +3,12 @@
         Создание опроса
         <span class="fas fa-info-circle btn"
               data-toggle="modal"
-              data-target="#rulesModal"></span>
+              data-target="#rulesModal"
+              title="Правила"></span>
+        <span class="fas fa-code btn"
+              data-toggle="modal"
+              data-target="#xmlModal"
+              title="Создать из XML"></span>
     </h2>
     <form action="createPoll" method="post" autocomplete="off"
           id="pollCreateForm">
@@ -193,6 +198,7 @@ HTML;
             }
         }
     }
+
     document.getElementById("tQuestion").addEventListener("keydown", function (event) {
         if (event.key === 'Enter') {
             document.getElementById("tVariant0").focus();
@@ -254,6 +260,38 @@ HTML;
                     </button>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create poll via XML -->
+
+<div class="modal fade" id="xmlModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+
+            <form method="post" action="createPollXML"
+                  autocomplete="off">
+                <div class="modal-header">
+                    <h2>Создание опроса из XML</h2>
+                </div>
+                <div class="modal-body">
+                    <label for="tXML">Введите сюда XML код опроса:</label>
+                    <textarea id="tXML" name="pollXML" class="xmlArea"><?php
+                        echo <<<XML
+<?xml version="1.0" encoding="UTF-8"?>
+<poll question="Какой ваш любимый цвет?">
+    <variant>Красный</variant>
+    <variant>Жёлтый</variant>
+    <variant>Синий</variant>
+</poll>
+XML;
+                        ?></textarea>
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" name="submit" value="Опубликовать" class="btn btn-primary">
+                </div>
+            </form>
         </div>
     </div>
 </div>

@@ -8,9 +8,7 @@ require_once "classes/Variant.php";
 define("maxVariants", 8);
 define("minVariants", 2);
 
-
 if (isset($_POST['submit'])) {
-
     $question = trim($_POST['question']);
 
     if (!Poll::IsQuestionCorrect($question)) {

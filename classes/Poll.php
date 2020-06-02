@@ -65,6 +65,37 @@ class Poll implements iModelMap
         $this->IsPollOfCurrentUser = ($this->CreatorId == $currentUser);
     }
 
+    public static function FromXML(string $xml): Poll
+    {
+        // Check for <poll> tag
+        $pollRegex = "~<poll(.*?)>(.*?)</poll>~s";
+        if (!preg_match($pollRegex, $xml, $m)) {
+            throw new Exception("XML должен иметь открывающий тег <poll> и закрывающий </poll>!");
+        }
+        $pollAttr = $m[1];
+        $variants = $m[2];
+
+        // Check for question attribute
+        $questionRegex = "~question\s*=\s*([\"'])(.*?)(\\1)~s";
+        if (!preg_match($questionRegex, $pollAttr, $m)) {
+            throw new Exception("Тег poll должен иметь атрибут question");
+        }
+        $question = $m[2];
+
+        $poll = new Poll(0, User::GetUserIdFromCookies(), $question, true, NULL, NULL, 0, false);
+
+        // Check for variants
+        $variantsRegex = "~<variant.*?>(.*?)</variant>~s";
+        if (!preg_match_all($variantsRegex, $variants, $m)){
+            throw new Exception("Тег <poll> должен иметь минимум 1 тег <variant>.");
+        }
+        foreach ($m[1] as $i => $variantText){
+            $poll->Variants[] = new Variant(0, $i, $variantText);
+        }
+
+        return $poll;
+    }
+
     /*
      * Puts poll to the database
      */

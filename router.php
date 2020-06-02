@@ -10,8 +10,10 @@ if (preg_match('/\.(?:png|jpg|jpeg|gif|css|js)$/', $_SERVER["REQUEST_URI"])) {
     $controller = $router->GetContentFile($contentSearchDir, "main");
 
     if ($controller == NULL) {
+        require_once "classes/ErrorHandler.php";
+
+        \ErrorHandler::AddError("Ошибка 404! Проверьте правильность запроса! " . $_SERVER["REQUEST_URI"]);
         $controller = __DIR__ . "/content/error.php";
-        $errorMsg = "Ошибка 404! Проверьте правильность запроса!";
     }
 
     include $controller;

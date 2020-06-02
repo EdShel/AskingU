@@ -99,6 +99,17 @@ div.variant-creation.variant-invisible {
     display: none;
 }
 
+.xmlArea {
+    width: 100%;
+    height: 200px;
+}
+
+.modal-body{
+    height: 250px;
+    overflow-y: auto;
+}
+
+
 /*
             Poll viewing
  */
@@ -115,4 +126,21 @@ div.variant-creation.variant-invisible {
 
 .up-indent {
     margin-top: 32px;
+}
+
+.copied {
+    animation-name: jumpingAnim;
+    animation-duration: 0.5s;
+    animation-iteration-count: 2;
+    animation-timing-function: ease;
+}
+
+.active-btn {
+    cursor: pointer;
+}
+
+@keyframes jumpingAnim {
+    25%  { transform: scale(0.5, 1.5); }
+    50%  { transform: scale(1.5, 0.5); }
+    100% { transform: scale(1, 1);  }
 }

@@ -3,9 +3,9 @@
     "ext-pdo_sqlite": "*",
     "ext-sqlite3": "*"
   },
-    "config": {
-        "preferred-install": "dist",
-        "disable-tls": true,
-        "secure-http": false
-    }    
+  "config": {
+      "preferred-install": "dist",
+      "disable-tls": true,
+      "secure-http": false
+  }
 }

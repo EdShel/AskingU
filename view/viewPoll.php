@@ -16,6 +16,8 @@ if (!isset($model)) {
     <div class="row mb-3">
         <h2 class="col-8">
             Просмотр опроса
+            <i id="copyXMLToClipboard" class="active-btn far fa-clipboard"
+               title="Скопировать XML в буфер обмена"></i>
         </h2>
         <div class="col-4 text-right">
             <?php
@@ -250,6 +252,14 @@ HTML;
     $(document).ready(function (e) {
         $('#filterForm').submit(UpdateStat);
         $('#filterForm').submit();
+        $('#copyXMLToClipboard').click(function(ev){
+            CopyRequestToClipboard("/getPollXML?id=<?php echo $model->Id ?>", function(){
+                let el = ev.target;
+
+                $(el).addClass("copied");
+                setTimeout(() => $(el).removeClass("copied"), 1000);
+            });
+        });
     });
 
 

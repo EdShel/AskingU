@@ -67,6 +67,8 @@ HTML;
 
     private static function StringToHTML(string $source){
 
+        $source = htmlspecialchars($source);
+
         // Get all the symbols of the line, e.g.
         // "this is \n an example"
         // will match "this is " & " an example"
