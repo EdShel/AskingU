@@ -17,22 +17,27 @@ class PageRouter
             $pathMatches
         );
 
+        print_r($pathMatches);
+        echo "<hr>";
+
         foreach ($pathMatches[1] as $indx => $match) {
             self::$PathParams[] = $match;
         }
+        echo "Params:" . count(self::$PathParams);
     }
 
     /***
      * @return string Path to the file-controller of the request
      */
-    public function GetContentFile($dirToSearch, $pathIfNoParams = NULL)
+    public function GetContentFile($dirToSearch, $contentIfNoParams = NULL)
     {
         // Check how many query parameters is there
         $paths = count(self::$PathParams);
 
         // If there are no parameters, use default content
-        if ($paths === 0 && $pathIfNoParams != NULL){
-            return $dirToSearch . "\\" . $pathIfNoParams . ".php";
+        if ($paths === 0 && $contentIfNoParams != NULL){
+            echo "<hr>Used default path: " . $dirToSearch . "\\" . $contentIfNoParams . ".php";
+            return $dirToSearch . "\\" . $contentIfNoParams . ".php";
         }
 
         // Go through all the path pieces
