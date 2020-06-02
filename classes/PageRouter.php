@@ -45,6 +45,7 @@ class PageRouter
             // If there is controller with .php extension
             $nextPathPiece = self::$PathParams[$i];
             $desiredFile = $dirToSearch . "\\" . $nextPathPiece . ".php";
+            echo "searching for " . $desiredFile . "<hr>";
             if (file_exists($desiredFile)) {
                 // Run the controller
                 return $desiredFile;
