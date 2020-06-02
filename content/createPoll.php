@@ -8,11 +8,15 @@ require_once "classes/Variant.php";
 define("maxVariants", 8);
 define("minVariants", 2);
 
+echo ("Checking for submit");
 if (isset($_POST['submit'])) {
+
     $question = trim($_POST['question']);
 
+    echo ("submit is found, question: $question");
+
     if (!Poll::IsQuestionCorrect($question)) {
-        ErrorHandler::AddError("Вопрос не может быть пустым или содержать телефонный номер!");
+        echo ("Вопрос не может быть пустым или содержать телефонный номер!");
     }
 
     $variants = array();
@@ -32,6 +36,8 @@ if (isset($_POST['submit'])) {
     }
 
     if (count($variants) < minVariants) {
+        echo "Not enough vars \n";
+
         ErrorHandler::AddError(
             "Для создания опроса необходимо как минимум " . minVariants . " вариантов");
     }
@@ -103,13 +109,18 @@ if (isset($_POST['submit'])) {
             $db->Rollback();
         }
     }
+    else{
+        print_r(ErrorHandler::$Errors);
+    }
 
     // Go to the main page
 
     if (ErrorHandler::GetErrorsCount() === 0) {
+        ErrorHandler::AddError("redirecting to main");
         header("Location: main");
     } else {
         session_start();
+        ErrorHandler::AddError("redirecting to main/error");
         $_SESSION["errorMessages"] = ErrorHandler::$Errors;
         header("Location: main/error");
     }
