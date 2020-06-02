@@ -17,13 +17,9 @@ class PageRouter
             $pathMatches
         );
 
-        print_r($pathMatches);
-        echo "<hr>";
-
         foreach ($pathMatches[1] as $indx => $match) {
             self::$PathParams[] = $match;
         }
-        echo "Params:" . count(self::$PathParams);
     }
 
     /***
@@ -36,7 +32,6 @@ class PageRouter
 
         // If there are no parameters, use default content
         if ($paths === 0 && $contentIfNoParams != NULL) {
-            echo "<hr>Used default path: " . $dirToSearch . "//" . $contentIfNoParams . ".php";
             return $dirToSearch . "//" . $contentIfNoParams . ".php";
         }
 
@@ -45,13 +40,9 @@ class PageRouter
             // If there is controller with .php extension
             $nextPathPiece = self::$PathParams[$i];
             $desiredFile = $dirToSearch . "//" . $nextPathPiece . ".php";
-            echo "searching for " . $desiredFile . "<hr>";
             if (file_exists($desiredFile)) {
                 // Run the controller
                 return $desiredFile;
-            }
-            else{
-                echo "File " . $desiredFile . " not found";
             }
             // There is no such controller, so try more
             $dirToSearch .= "//" . $nextPathPiece;
