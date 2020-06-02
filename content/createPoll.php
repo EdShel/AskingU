@@ -8,12 +8,9 @@ require_once "classes/Variant.php";
 define("maxVariants", 8);
 define("minVariants", 2);
 
-echo ("Checking for submit");
 if (isset($_POST['submit'])) {
 
     $question = trim($_POST['question']);
-
-    echo ("submit is found, question: $question");
 
     if (!Poll::IsQuestionCorrect($question)) {
         echo ("Вопрос не может быть пустым или содержать телефонный номер!");
@@ -36,8 +33,6 @@ if (isset($_POST['submit'])) {
     }
 
     if (count($variants) < minVariants) {
-        echo "Not enough vars \n";
-
         ErrorHandler::AddError(
             "Для создания опроса необходимо как минимум " . minVariants . " вариантов");
     }
@@ -47,6 +42,11 @@ if (isset($_POST['submit'])) {
         // Open db connection
         if (!isset($db)) {
             $db = new DbAccess();
+            echo "db was not set";
+        }
+
+        if ($db){
+            echo "db is set now";
         }
 
         $user = User::FromCookies($db);
@@ -80,7 +80,7 @@ if (isset($_POST['submit'])) {
             0,
             isset($_POST["shuffle"]));
 
-
+echo "begin trans";
         try {
             // Start transaction
             $db->BeginTransaction();
@@ -104,7 +104,10 @@ if (isset($_POST['submit'])) {
 
             // Commit changes
             $db->Commit();
+            echo " comitted";
         } catch (Exception $ex) {
+            echo $ex->getMessage();
+
             // If an error, rollback
             $db->Rollback();
         }
