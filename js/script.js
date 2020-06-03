@@ -55,4 +55,4 @@ function copyToClipboard (str) {
     el.setSelectionRange(0, 99999); /*For mobile devices*/
     document.execCommand('copy');
     document.body.removeChild(el);
-};
+}

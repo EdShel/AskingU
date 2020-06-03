@@ -87,6 +87,12 @@ div.variant > p {
 div.variant.voteable:hover {
     cursor: pointer;
 }
+
+.poll-bottom-icon {
+    color: #007bff;
+    margin: 0 10px;
+}
+
 /*
         Poll creation
  */
@@ -105,7 +111,7 @@ div.variant-creation.variant-invisible {
 }
 
 .modal-body{
-    height: 250px;
+    max-height: 640px;
     overflow-y: auto;
 }
 

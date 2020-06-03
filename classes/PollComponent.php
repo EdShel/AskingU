@@ -50,17 +50,44 @@ class PollComponent extends Component
 
         // Adding footer
 
-        $likeHTML = self::GetHeartHTML();
+
+        $likeHTML = self::GetHeartHTML($this->poll->IsCurrentUserLiked);
         $likes = $this->poll->Likes;
+        $text = $this->poll->CanVote
+            ? (!$this->poll->IsCurrentUserLiked
+            ? "Оценить"
+            : "Убрать оценку")
+        : "Оценок (войдите, чтоб оценить)";
+        $likeBtn = <<<HTML
+<a id="likeBtn{$this->poll->Id}" href="#" 
+    class="card-link poll-bottom-icon"
+    title="{$text}">{$likeHTML} $likes</a>
+HTML;
+
+        if ($this->poll->CanVote) {
+            $likeBtn .= <<<HTML
+<form id="likePoll{$this->poll->Id}" action="likePoll" method="post" style="display: none">
+<input type="hidden" name="pollId" value="{$this->poll->Id}">
+</form>
+<script>
+    $('#likeBtn{$this->poll->Id}').click(function(e){
+        e.preventDefault();
+        $('#likePoll{$this->poll->Id}').submit();
+    });
+</script>
+HTML;
+
+        }
 
         $res .= <<<HTML
                 </ul>
                 <div class="card-body">
-                    <a href="#" class="card-link">{$likeHTML} {$likes} Оценить</a>
+                    {$likeBtn}
+                    <span class="poll-bottom-icon" title="Просмотров">
+                        <i class="fa fa-eye"></i>
+                        <span>{$this->poll->Views}</span>
+                    </span>
                     <a href="/viewPoll?id={$this->poll->Url}" class="card-link">Подробнее</a>
-HTML;
-
-        $res .= <<<HTML
                 </div>
             </div>
         </div>
@@ -72,18 +99,11 @@ HTML;
 
 
     // HTML code of the heart-shaped symbol of size 1em x 1em
-    private static function GetHeartHTML(): string
+    private static function GetHeartHTML($filled): string
     {
+        $clas = $filled ? "fas" : "far";
         return <<<HTML
-<span>
-    <svg class="bi bi-heart-fill" height="1em" width="1em"
-        viewBox="0 0 16 16" fill="currentColor" 
-        xmlns="http://www.w3.org/2000/svg">
-            <path fill-rule="evenodd" 
-                d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z" 
-                clip-rule="evenodd"/>
-    </svg>
-</span>
+<i class="{$clas} fa-heart"></i>
 HTML;
 
     }

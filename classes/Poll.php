@@ -38,6 +38,10 @@ class Poll implements iModelMap
 
     public bool $IsPollOfCurrentUser;
 
+    public bool $IsCurrentUserLiked;
+
+    public int $Views;
+
     // Basic constructor
     public function __construct(
         int $id,
@@ -56,6 +60,7 @@ class Poll implements iModelMap
         $this->Url = $url;
         $this->BlockingTime = $blockingTime;
         $this->Likes = $likes;
+        $this->Views = 0;
         $this->ShuffleVariants = $shuffleVariants;
 
         $currentUser = User::GetUserIdFromCookies();
@@ -63,6 +68,7 @@ class Poll implements iModelMap
             && ($blockingTime == NULL || $blockingTime < new DateTime());
 
         $this->IsPollOfCurrentUser = ($this->CreatorId == $currentUser);
+        $this->IsCurrentUserLiked = false;
     }
 
     public static function FromXML(string $xml): Poll
@@ -107,7 +113,6 @@ class Poll implements iModelMap
         $isPublicInt = (int)$this->IsPublic;
         // Whether variants must be randomly shuffled
         $shuffle = (int)$this->ShuffleVariants;
-        echo "id: $this->Id ques: $this->Question isPublic: $this->IsPublic Url: $this->Url Block: $blockingDateStr likes: $this->Likes shuffle $shuffle";
 
         // Generate unique URL
         $this->Url = self::GenerateUniqueUrl($db, 5);
@@ -115,9 +120,9 @@ class Poll implements iModelMap
         // Add poll to the db
         $insert = <<<SQL
             INSERT INTO polls(creatorId, question, isPublic, url,
-                    blockingTime, likes, shuffle) 
+                    blockingTime, shuffle, views) 
                     VALUES(:CreatorId, :Question, :IsPublicInt, :Url,
-                    :blockingDateStr, :Likes, :Shuffle);
+                    :blockingDateStr, :Shuffle, :Views);
 SQL;
         $stmt = $db->PrepareStatement($insert);
 
@@ -126,8 +131,8 @@ SQL;
         $stmt->bindParam(":IsPublicInt", $isPublicInt, PDO::PARAM_INT);
         $stmt->bindParam(":Url", $this->Url, PDO::PARAM_STR);
         $stmt->bindParam(":blockingDateStr", $blockingDateStr, PDO::PARAM_INT);
-        $stmt->bindParam(":Likes", $this->Likes, PDO::PARAM_INT);
         $stmt->bindParam(":Shuffle", $shuffle, PDO::PARAM_INT);
+        $stmt->bindParam(":Views", $this->Views, PDO::PARAM_INT);
 
         $stmt->execute();
 
@@ -141,6 +146,9 @@ SQL;
      */
     public static function FromDb(DbAccess $db, $queryResult, int $userId, bool $withVariants): Poll
     {
+        $pollId = (int)$queryResult['id'];
+        $likes = $db->SQLSingle("SELECT COUNT(*) FROM likes WHERE pollId = $pollId;", false);
+
         // Create new Poll from query result
         $poll = new Poll(
             $queryResult["id"],
@@ -149,11 +157,17 @@ SQL;
             $queryResult["isPublic"] ?? TRUE,
             $queryResult["url"],
             self::GetDateTime($queryResult["blockingTime"]),
-            $queryResult["likes"] ?? 0,
+            $likes,
             $queryResult["shuffle"] ?? FALSE
         );
 
+        $poll->Views = $queryResult['views'];
+
         if ($withVariants) {
+
+            $poll->IsCurrentUserLiked = 1 == $db->SQLSingle(
+                "SELECT COUNT(*) FROM likes WHERE userId = $userId AND pollid = $pollId", FALSE);
+
             $variantsResult = $db->SQLMultiple(<<<SQL
             SELECT pollId, id, value 
             FROM variants 
@@ -220,11 +234,11 @@ SQL;
             CREATE TABLE polls(
                 id INTEGER PRIMARY KEY,
                 creatorId INTEGER,
+                views INTEGER,
                 question TEXT,
                 isPublic BOOLEAN,
                 url TEXT UNIQUE,
                 blockingTime TEXT,
-                likes INTEGER,
                 shuffle BOOLEAN,
                 FOREIGN KEY (creatorId) REFERENCES users(id)
             );

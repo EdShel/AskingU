@@ -1,7 +1,7 @@
 <?php
 if (isset($_POST['pollId']) && isset($_POST['variantId'])) {
-    require_once "./classes/User.php";
-    require_once "./classes/DbAccess.php";
+    require_once "classes/User.php";
+    require_once "classes/DbAccess.php";
 
     if (!isset($db)) {
         $db = new DbAccess();
@@ -40,7 +40,8 @@ if (isset($_POST['pollId']) && isset($_POST['variantId'])) {
 }
 
 if (ErrorHandler::GetErrorsCount() === 0){
-    header('Location: ' . $_SERVER['HTTP_REFERER']);
+    require_once "classes/MVC/Controller.php";
+    Controller::RedirectBack();
 }
 else{
     session_start();

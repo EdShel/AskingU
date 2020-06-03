@@ -4,6 +4,7 @@ require_once "Poll.php";
 require_once "Variant.php";
 require_once "Vote.php";
 require_once "User.php";
+require_once "Like.php";
 require_once "ErrorHandler.php";
 
 class DbAccess
@@ -178,7 +179,7 @@ class DbAccess
             Variant::InitSQLTable($this);
             User::InitSQLTable($this);
             Vote::InitSQLTable($this);
-
+            Like::InitSQLTable($this);
 
             $this->SQLRun(<<<SQL
 INSERT INTO users(name, email, password, claims, year, gender)

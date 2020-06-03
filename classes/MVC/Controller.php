@@ -8,7 +8,8 @@ class Controller
         include $_SERVER['DOCUMENT_ROOT'] . '/index.php';
     }
 
-    public static function RedirectBack(): void{
-    header('Location: ' . $_SERVER['HTTP_REFERER']);
-}
+    public static function RedirectBack(): void
+    {
+        header('Location: ' . $_SERVER['HTTP_REFERER']);
+    }
 }
