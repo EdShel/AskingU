@@ -9,6 +9,6 @@ class Controller
     }
 
     public static function RedirectBack(): void{
-        header('Location: ' . $_SERVER['HTTP_REFERER']);
-    }
+    header('Location: ' . $_SERVER['HTTP_REFERER']);
+}
 }

@@ -32,7 +32,8 @@ if (isset($_POST['submit'])) {
         }
     }
 
-    if (count($variants) < minVariants) {
+    if (ErrorHandler::GetErrorsCount() == 0
+            && count($variants) < minVariants) {
         ErrorHandler::AddError(
             "Для создания опроса необходимо как минимум " . minVariants . " вариантов");
     }
@@ -103,18 +104,13 @@ if (isset($_POST['submit'])) {
             $db->Rollback();
         }
     }
-    else{
-        print_r(ErrorHandler::$Errors);
-    }
 
     // Go to the main page
 
     if (ErrorHandler::GetErrorsCount() === 0) {
-        ErrorHandler::AddError("redirecting to main");
         header("Location: main");
     } else {
         session_start();
-        ErrorHandler::AddError("redirecting to main/error");
         $_SESSION["errorMessages"] = ErrorHandler::$Errors;
         header("Location: main/error");
     }

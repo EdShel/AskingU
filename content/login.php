@@ -5,6 +5,7 @@ if (isset($_POST['submit'])) {
     $errors = array();
 
     require_once "classes/DbAccess.php";
+    require_once "classes/MVC/Controller.php";
 
     if (!isset($db)) {
         $db = new DbAccess('polls.db');
@@ -47,23 +48,11 @@ if (isset($_POST['submit'])) {
                 $authDuration, '/', null, null, true);
 
             // Go to the main page
-            $redirected = true;
-            header("Location: main");
+            Controller::RedirectBack();
             exit();
         }
     }
-
-    if (count($errors) != 0) {
-        echo '<div>';
-
-        foreach ($errors as $i => $error) {
-            echo "<div>$error</div>";
-        }
-
-        echo '</div>';
-    }
 }
-
 
 ?>
 
