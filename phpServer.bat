@@ -1,2 +1,2 @@
 explorer "http://localhost:8000"
-php -S localhost:8000 "D:\AskingU\router.php"
+php -S "localhost:8000" router.php
