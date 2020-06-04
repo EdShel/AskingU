@@ -214,7 +214,8 @@ SQL;
         return $poll;
     }
 
-    public static function GetQueryResultByURL(DbAccess $db, string $url){
+    public static function GetQueryResultByURL(DbAccess $db, string $url)
+    {
 
         $stmt = $db->PrepareStatement("SELECT * FROM polls WHERE url = :url");
         $stmt->bindParam(":url", $url);
@@ -244,6 +245,31 @@ SQL;
     public static function IncrementVisitsCount(DbAccess $db, int $pollId): void
     {
         $db->SQLRun("UPDATE polls SET views = views + 1 WHERE Id = $pollId;");
+    }
+
+    public static function GetAllPolls(DbAccess $db, int $userId): array
+    {
+        // Get polls to display
+        $pollsIds = $db->SQLMultiple("SELECT * FROM polls");
+
+        // If found none
+        if ($pollsIds === NULL) {
+            throw new Exception("Невозможно получить опросы!");
+        }
+
+        $result = array();
+
+        // Go through all the polls
+        while ($pollArray = $pollsIds->fetch(SQLITE3_ASSOC)) {
+            if ($pollArray == NULL) {
+                ErrorHandler::AddError("Невозможно получить опрос!");
+                break;
+            }
+            // And add poll to the model array
+            $result[] = Poll::FromDb($db, $pollArray, $userId, true);
+        }
+
+        return $result;
     }
 
     /*

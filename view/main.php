@@ -7,41 +7,16 @@
 <div class="container">
 
     <div class="row">
+
         <?php
 
-        require_once "./model/Poll.php";
-        require_once "./model/Variant.php";
-        require_once "./classes/PollComponent.php";
-        require_once "./classes/ErrorHandler.php";
+        require_once "classes/MVC/Controller.php";
+        require_once "classes/PollComponent.php";
 
-        // Find user's id
-        if (isset($user)) {
-            $userId = $user->Id;
-        } else {
-            $userId = User::GetUserIdFromCookies();
+        foreach (Controller::$Model as $i => $poll){
+            echo new PollComponent($poll);
         }
 
-        try {
-            // Get polls to display
-            $pollsIds = $db->SQLMultiple("SELECT * FROM polls");
-
-            // If found none
-            if ($pollsIds === NULL) {
-                throw new Exception();
-            }
-
-            // Go through all the polls
-            while ($pollArray = $pollsIds->fetch(SQLITE3_ASSOC)) {
-                if ($pollArray == NULL) {
-                    ErrorHandler::AddError("Невозможно получить опрос!");
-                    break;
-                }
-                // And display polls
-                echo new PollComponent(Poll::FromDb($db, $pollArray, $userId, true));
-            }
-        } catch (Exception $ex) {
-            ErrorHandler::AddError("Не получилось отобразить опросы! " . $ex->getMessage());
-        }
         ?>
 
     </div>
