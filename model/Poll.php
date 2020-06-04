@@ -1,8 +1,9 @@
 <?php
 
-require_once "DbAccess.php";
+require_once "classes/DbAccess.php";
 require_once "iModelMap.php";
 require_once "User.php";
+require_once "PollVisit.php";
 
 class Poll implements iModelMap
 {
@@ -42,6 +43,8 @@ class Poll implements iModelMap
 
     public int $Views;
 
+    public int $ViewsToday;
+
     // Basic constructor
     public function __construct(
         int $id,
@@ -69,6 +72,7 @@ class Poll implements iModelMap
 
         $this->IsPollOfCurrentUser = ($this->CreatorId == $currentUser);
         $this->IsCurrentUserLiked = false;
+        $this->ViewsToday = 0;
     }
 
     public static function FromXML(string $xml): Poll
@@ -92,10 +96,10 @@ class Poll implements iModelMap
 
         // Check for variants
         $variantsRegex = "~<variant.*?>(.*?)</variant>~s";
-        if (!preg_match_all($variantsRegex, $variants, $m)){
+        if (!preg_match_all($variantsRegex, $variants, $m)) {
             throw new Exception("Тег <poll> должен иметь минимум 1 тег <variant>.");
         }
-        foreach ($m[1] as $i => $variantText){
+        foreach ($m[1] as $i => $variantText) {
             $poll->Variants[] = new Variant(0, $i, $variantText);
         }
 
@@ -165,8 +169,10 @@ SQL;
 
         if ($withVariants) {
 
+            $poll->ViewsToday = PollVisit::GetUniqueVisits($poll->Id, $db);
+
             $poll->IsCurrentUserLiked = 1 == $db->SQLSingle(
-                "SELECT COUNT(*) FROM likes WHERE userId = $userId AND pollid = $pollId", FALSE);
+                    "SELECT COUNT(*) FROM likes WHERE userId = $userId AND pollid = $pollId", FALSE);
 
             $variantsResult = $db->SQLMultiple(<<<SQL
             SELECT pollId, id, value 
@@ -208,6 +214,16 @@ SQL;
         return $poll;
     }
 
+    public static function GetQueryResultByURL(DbAccess $db, string $url){
+
+        $stmt = $db->PrepareStatement("SELECT * FROM polls WHERE url = :url");
+        $stmt->bindParam(":url", $url);
+
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     /*
      * Deletes poll from the database
      */
@@ -223,6 +239,11 @@ SQL;
         FROM votes
         WHERE pollId = {$this->Id} AND voterId = {$userId};
         SQL, false);
+    }
+
+    public static function IncrementVisitsCount(DbAccess $db, int $pollId): void
+    {
+        $db->SQLRun("UPDATE polls SET views = views + 1 WHERE Id = $pollId;");
     }
 
     /*

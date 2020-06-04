@@ -1,9 +1,9 @@
 <?php
 
-require_once "classes/Poll.php";
-require_once "classes/Like.php";
+require_once "model/Poll.php";
+require_once "model/Like.php";
 require_once "classes/DbAccess.php";
-require_once "classes/User.php";
+require_once "model/User.php";
 require_once "classes/MVC/Controller.php";
 
 

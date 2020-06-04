@@ -49,6 +49,16 @@ class User implements iModelMap
         return $user;
     }
 
+    public static function GetUserIdWithAccessTokenValidation(DbAccess $db): int
+    {
+        $user = User::FromCookies($db);
+        if ($user === NULL) {
+            return -1;
+        } else {
+            return $user->Id;
+        }
+    }
+
     public static function FromCookies(DbAccess $db): ?User
     {
         // If there are required cookies of user id and his access token
@@ -67,7 +77,7 @@ class User implements iModelMap
                 $accessToken = $userResult['accessToken'];
 
                 if ($_COOKIE['accessToken'] == $accessToken) {
-                    // Parse the user
+                    // Parse the user from sql query result
                     return self::FromQueryResult($userResult);
                 }
             }
@@ -88,7 +98,7 @@ class User implements iModelMap
         return self::FromQueryResult($userResult);
     }
 
-    public static function GetUserIdFromCookies() : int
+    public static function GetUserIdFromCookies(): int
     {
         if (isset($_COOKIE['accessToken'])
             && isset($_COOKIE['id'])) {
@@ -166,18 +176,18 @@ class User implements iModelMap
 
         // Check the name for initials are only at the beginning
         $correctNameAndInitials =
-                (preg_match("~{$inits}?{$secondName}~xs", $name)
+            (preg_match("~{$inits}?{$secondName}~xs", $name)
                 // Check for trailing initials and their absence
-            ||  preg_match("~{$secondName}\s+{$inits}?~xs", $name));
+                || preg_match("~{$secondName}\s+{$inits}?~xs", $name));
 
-            // Check for forbidden symbols
+        // Check for forbidden symbols
         $containsForbiddenChars = preg_match("~[0-9!?,\"/\\\@#$%^&*()=+]~", $name);
 
-        if (!$correctNameAndInitials){
+        if (!$correctNameAndInitials) {
             $exception = "Неправильная запись фамилии и инициалов!";
             return false;
         }
-        if ($containsForbiddenChars){
+        if ($containsForbiddenChars) {
             $exception = "Фамилия и инициалы не должны содержать следующие символы: цифры, знаки пунктуации, спец-символы";
             return false;
         }

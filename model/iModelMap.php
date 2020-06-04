@@ -1,6 +1,6 @@
 <?php
 
-require_once "DbAccess.php";
+require_once "classes/DbAccess.php";
 
 interface iModelMap
 {

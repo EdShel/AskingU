@@ -1,10 +1,11 @@
 <?php
 
-require_once "Poll.php";
-require_once "Variant.php";
-require_once "Vote.php";
-require_once "User.php";
-require_once "Like.php";
+require_once "model/Poll.php";
+require_once "model/Variant.php";
+require_once "model/Vote.php";
+require_once "model/User.php";
+require_once "model/Like.php";
+require_once "model/PollVisit.php";
 require_once "ErrorHandler.php";
 
 class DbAccess
@@ -180,6 +181,7 @@ class DbAccess
             User::InitSQLTable($this);
             Vote::InitSQLTable($this);
             Like::InitSQLTable($this);
+            PollVisit::InitSQLTable($this);
 
             $this->SQLRun(<<<SQL
 INSERT INTO users(name, email, password, claims, year, gender)

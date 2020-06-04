@@ -1,7 +1,7 @@
 <?php
 
 require_once "classes/DbAccess.php";
-require_once "classes/Poll.php";
+require_once "model/Poll.php";
 
 if (!isset($db)){
     $db = new DbAccess();

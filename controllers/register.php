@@ -1,5 +1,5 @@
 <?php
-require_once "./classes/User.php";
+require_once "./model/User.php";
 if (isset($_POST['submit'])) {
 
     require_once "classes/DbAccess.php";

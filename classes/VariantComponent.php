@@ -1,7 +1,7 @@
 <?php
 
 require_once "Component.php";
-require_once "User.php";
+require_once "model/User.php";
 
 // Component of the variants in polls
 class VariantComponent extends Component

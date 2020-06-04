@@ -1,7 +1,7 @@
 <?php
 
-require_once "Poll.php";
-require_once "Variant.php";
+require_once "model/Poll.php";
+require_once "model/Variant.php";
 require_once "Component.php";
 require_once "VariantComponent.php";
 
@@ -83,9 +83,9 @@ HTML;
                 </ul>
                 <div class="card-body">
                     {$likeBtn}
-                    <span class="poll-bottom-icon" title="Просмотров">
+                    <span class="poll-bottom-icon" title="Просмотров / Уникальных просмотров за день">
                         <i class="fa fa-eye"></i>
-                        <span>{$this->poll->Views}</span>
+                        <span>{$this->poll->Views} / {$this->poll->ViewsToday}</span>
                     </span>
                     <a href="/viewPoll?id={$this->poll->Url}" class="card-link">Подробнее</a>
                 </div>

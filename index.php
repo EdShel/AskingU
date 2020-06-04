@@ -21,7 +21,7 @@
 
 // Import classes
 require_once "classes/DbAccess.php";
-require_once "classes/User.php";
+require_once "model/User.php";
 require_once "classes/Component.php";
 require_once "classes/ErrorHandler.php";
 require_once "classes/PageRouter.php";
@@ -36,8 +36,8 @@ if (isset($db)) {
 
 // If the user is not authorised, create dialog windows
 if (!isset($user)) {
-    include "content/register.php";
-    include "content/login.php";
+    include "controllers/register.php";
+    include "controllers/login.php";
 }
 
 // Try to get errors from the session (when redirected)

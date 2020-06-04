@@ -9,8 +9,8 @@
     <div class="row">
         <?php
 
-        require_once "./classes/Poll.php";
-        require_once "./classes/Variant.php";
+        require_once "./model/Poll.php";
+        require_once "./model/Variant.php";
         require_once "./classes/PollComponent.php";
         require_once "./classes/ErrorHandler.php";
 
@@ -40,7 +40,7 @@
                 echo new PollComponent(Poll::FromDb($db, $pollArray, $userId, true));
             }
         } catch (Exception $ex) {
-            ErrorHandler::AddError("Не получилось отобразить опросы!");
+            ErrorHandler::AddError("Не получилось отобразить опросы! " . $ex->getMessage());
         }
         ?>
 

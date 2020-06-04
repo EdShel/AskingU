@@ -1,7 +1,7 @@
 <?php
 
-require_once "classes/Poll.php";
-require_once "classes/Variant.php";
+require_once "model/Poll.php";
+require_once "model/Variant.php";
 require_once "classes/ErrorHandler.php";
 require_once "classes/VariantComponent.php";
 

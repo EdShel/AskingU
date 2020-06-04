@@ -1,6 +1,6 @@
 <?php
 if (isset($_POST['pollId']) && isset($_POST['variantId'])) {
-    require_once "classes/User.php";
+    require_once "model/User.php";
     require_once "classes/DbAccess.php";
 
     if (!isset($db)) {
